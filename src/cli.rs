@@ -1,0 +1,67 @@
+use clap::{Arg, Command};
+
+pub fn build_cli() -> Command {
+    Command::new("rclone-decrypt")
+        .version("0.1.0")
+        .author("Your Name <your.email@example.com>")
+        .about("Decrypt files encrypted by rclone")
+        .arg(
+            Arg::new("input")
+                .short('i')
+                .long("input")
+                .value_name("FILE")
+                .help("Input encrypted .bin file")
+                .required(true)
+        )
+        .arg(
+            Arg::new("output")
+                .short('o')
+                .long("output")
+                .value_name("FILE")
+                .help("Output decrypted file")
+                .required(true)
+        )
+        .arg(
+            Arg::new("password")
+                .short('p')
+                .long("password")
+                .value_name("PASSWORD")
+                .help("Encryption password (not required for interactive or wordlist modes)")
+                .required(false)
+        )
+        .arg(
+            Arg::new("salt")
+                .short('s')
+                .long("salt")
+                .value_name("SALT")
+                .help("Salt used for encryption (plain text, base64, or hex with 0x prefix)")
+                .required(false)
+        )
+        .arg(
+            Arg::new("auto")
+                .short('a')
+                .long("auto")
+                .help("Auto-detect configuration by trying common rclone setups")
+                .action(clap::ArgAction::SetTrue)
+        )
+        .arg(
+            Arg::new("interactive")
+                .long("interactive")
+                .help("Interactive mode - try different passwords interactively")
+                .action(clap::ArgAction::SetTrue)
+        )
+        .arg(
+            Arg::new("wordlist")
+                .short('w')
+                .long("wordlist")
+                .value_name("FILE")
+                .help("File containing passwords to try (one per line)")
+        )
+        .arg(
+            Arg::new("verbose")
+                .short('v')
+                .long("verbose")
+                .help("Enable verbose output")
+                .action(clap::ArgAction::SetTrue)
+        )
+}
