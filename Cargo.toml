@@ -1,0 +1,17 @@
+[package]
+name = "rclone-decrypt"
+version = "0.1.0"
+edition = "2021"
+description = "Cross-platform tool to decrypt rclone encrypted .bin files"
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+
+[dependencies]
+clap = { version = "4.0", features = ["derive"] }
+crypto_secretbox = "0.1"
+scrypt = "0.11"
+base64 = "0.21"
+hex = "0.4"
+anyhow = "1.0"
+thiserror = "1.0"
+sodiumoxide = "0.2"
