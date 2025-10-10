@@ -32,7 +32,6 @@ cargo rel  # The binary gets symlinked to `rclonedecrypt`
 * Intel macOS: `cargo build --release --target x86_64-apple-darwin`
 * Apple Silicon macOS: `cargo build --release --target aarch64-apple-darwin`
 * Windows (with `mingw-w64`): `cargo build --release --target x86_64-pc-windows-gnu`
-```
 
 ### Download pre-built binaries
 Check the [Releases](https://github.com/pepa65/rclonedecrypt/releases) page
