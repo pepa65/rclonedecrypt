@@ -23,7 +23,9 @@ jobs:
         toolchain: ${{ matrix.rust }}
         override: true
     - name: Install musl
-      run: rustup target add x86_64-unknown-linux-musl
+      run: |
+        rustup target add x86_64-unknown-linux-musl
+        $env:RUSTFLAGS = "-C target-feature=+crt-static"
     - name: check
       uses: actions-rs/cargo@v1
       with:
