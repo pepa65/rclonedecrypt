@@ -333,13 +333,12 @@ dependencies = [
 
 [[package]]
 name = "rclonedecrypt"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "base64",
  "clap",
  "hex",
- "libsodium-sys",
  "scrypt",
  "sodiumoxide",
  "thiserror",

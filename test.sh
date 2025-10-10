@@ -46,7 +46,7 @@ echo "Building rclonedecrypt..."
 cargo rel
 
 echo "--- Decrypting file with rclonedecrypt..."
-./rclonedecrypt -i "$encrypted_file" -o test/_decrypted.txt -p$PASSWORD -s$SALT -v
+./rclonedecrypt "$encrypted_file" -o test/_decrypted.txt -p $PASSWORD -s $SALT -v
 
 echo "--- Verifying decryption..."
 if diff test/_original.txt test/_decrypted.txt >/dev/null
