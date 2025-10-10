@@ -1,6 +1,6 @@
 [package]
 name = "rclonedecrypt"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 authors = ["github.com/mcolatosti", "github.com/pepa65"]
 description = "CLI to decrypt rclone-encrypted files"
@@ -26,3 +26,4 @@ hex = "0.4"
 anyhow = "1.0"
 thiserror = "2.0"
 sodiumoxide = "0.2"
+libsodium-sys = "0.2.7"

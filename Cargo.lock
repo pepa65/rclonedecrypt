@@ -339,6 +339,7 @@ dependencies = [
  "base64",
  "clap",
  "hex",
+ "libsodium-sys",
  "scrypt",
  "sodiumoxide",
  "thiserror",
