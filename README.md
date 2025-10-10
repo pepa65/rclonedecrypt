@@ -1,4 +1,4 @@
-# rclonedecrypt 0.2.1
+# rclonedecrypt 0.2.0
 **CLI to decrypt rclone-encrypted files**
 
 ## Features
@@ -39,7 +39,7 @@ Check the [Releases](https://github.com/pepa65/rclonedecrypt/releases) page
 ## Usage
 ### Help
 ```
-rclonedecrypt 0.2.1 - CLI to decrypt rclone-encrypted files
+rclonedecrypt 0.2.0 - CLI to decrypt rclone-encrypted files
 USAGE: rclonedecrypt [OPTIONS] --output <FILE> --password <PASSWORD> --salt <SALT> <FILE>
 OPTIONS:
   -o, --output <FILE>        Output decrypted file
