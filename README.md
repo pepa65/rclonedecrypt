@@ -1,3 +1,10 @@
+[![version](https://img.shields.io/crates/v/rclonedecrypt.svg)](https://crates.io/crates/rclonedecrypt)
+[![build](https://github.com/pepa65/rclonedecrypt/actions/workflows/ci.yml/badge.svg)](https://github.com/pepa65/rclonedecrypt/actions/workflows/ci.yml)
+[![dependencies](https://deps.rs/repo/github/pepa65/rclonedecrypt/status.svg)](https://deps.rs/repo/github/pepa65/rclonedecrypt)
+[![docs](https://img.shields.io/badge/docs-rclonedecrypt-blue.svg)](https://docs.rs/crate/rclonedecrypt/latest)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pepa65/rclonedecrypt/blob/master/LICENSE)
+[![downloads](https://img.shields.io/crates/d/rclonedecrypt.svg)](https://crates.io/crates/rclonedecrypt)
+
 # rclonedecrypt 0.2.3
 **CLI to decrypt rclone-encrypted files**
 
