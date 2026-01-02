@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pepa65/rclonedecrypt/blob/master/LICENSE)
 [![downloads](https://img.shields.io/crates/d/rclonedecrypt.svg)](https://crates.io/crates/rclonedecrypt)
 
-# rclonedecrypt 0.2.21
+# rclonedecrypt 0.2.22
 **CLI to decrypt rclone-encrypted files**
 
 ## Features
@@ -46,7 +46,7 @@ Check the [Releases](https://github.com/pepa65/rclonedecrypt/releases) page
 ## Usage
 ### Help
 ```
-rclonedecrypt 0.2.21 - CLI to decrypt rclone-encrypted files
+rclonedecrypt 0.2.22 - CLI to decrypt rclone-encrypted files
 USAGE: rclonedecrypt [OPTIONS] --output <FILE> --password <PASSWORD> --salt <SALT> <FILE>
 OPTIONS:
   -o, --output <FILE>        Output decrypted file
