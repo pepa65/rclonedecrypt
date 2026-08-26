@@ -122,7 +122,8 @@ impl RcloneDecryptor {
 		let mut key = [0u8; KEY_SIZE];
 		let params = Params::new(
 			14, // log2(16384) = 14
-			SCRYPT_R, SCRYPT_P, KEY_SIZE,
+			SCRYPT_R,
+			SCRYPT_P,
 		)
 		.map_err(|_| DecryptionError::InvalidPassword)?;
 		scrypt(self.password.as_bytes(), &self.salt, &params, &mut key).map_err(|_| DecryptionError::InvalidPassword)?;
