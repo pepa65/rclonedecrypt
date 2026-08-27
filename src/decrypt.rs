@@ -1,6 +1,10 @@
 use crate::build_cli;
 use crate::error::{DecryptionError, DecryptionResult};
 use base64::{Engine as _, engine::general_purpose};
+use crypto_secretbox::{
+	XSalsa20Poly1305,
+	aead::{Aead, KeyInit},
+};
 use scrypt::{Params, scrypt};
 use std::fs::File;
 use std::io::{BufReader, BufWriter, Read, Write};
@@ -16,11 +20,11 @@ const CHUNK_SIZE: usize = 65536; // 64KB chunks
 /// Increment a 24-byte nonce for the next chunk
 fn increment_nonce(nonce: &mut [u8; 24]) {
 	// Try little-endian increment (increment from the beginning)
-	for i in 0..24 {
-		if nonce[i] == 255 {
-			nonce[i] = 0;
+	for byte in nonce.iter_mut() {
+		if *byte == 255 {
+			*byte = 0;
 		} else {
-			nonce[i] += 1;
+			*byte += 1;
 			break;
 		}
 	}
@@ -28,11 +32,11 @@ fn increment_nonce(nonce: &mut [u8; 24]) {
 
 /// Alternative nonce increment (big-endian, from the end)
 fn increment_nonce_be(nonce: &mut [u8; 24]) {
-	for i in (0..24).rev() {
-		if nonce[i] == 255 {
-			nonce[i] = 0;
+	for byte in nonce.iter_mut().rev() {
+		if *byte == 255 {
+			*byte = 0;
 		} else {
-			nonce[i] += 1;
+			*byte += 1;
 			break;
 		}
 	}
@@ -122,8 +126,7 @@ impl RcloneDecryptor {
 		let mut key = [0u8; KEY_SIZE];
 		let params = Params::new(
 			14, // log2(16384) = 14
-			SCRYPT_R,
-			SCRYPT_P,
+			SCRYPT_R, SCRYPT_P,
 		)
 		.map_err(|_| DecryptionError::InvalidPassword)?;
 		scrypt(self.password.as_bytes(), &self.salt, &params, &mut key).map_err(|_| DecryptionError::InvalidPassword)?;
@@ -132,9 +135,8 @@ impl RcloneDecryptor {
 			println!("Debug: Scrypt params - N: {}, r: {}, p: {}", SCRYPT_N, SCRYPT_R, SCRYPT_P);
 			println!("Debug: Key derived successfully ({} bytes)", key.len());
 		};
-		// Initialize sodiumoxide for NaCl secretbox
-		sodiumoxide::init().map_err(|_| DecryptionError::InvalidPassword)?;
-		let secretbox_key = sodiumoxide::crypto::secretbox::Key::from_slice(&key).ok_or(DecryptionError::InvalidPassword)?;
+		// Initialize XSalsa20-Poly1305
+		let cipher = XSalsa20Poly1305::new_from_slice(&key).map_err(|_| DecryptionError::InvalidPassword)?;
 		// Read remaining data and try different approaches
 		let mut remaining_data = Vec::new();
 		input_file.read_to_end(&mut remaining_data)?;
@@ -142,8 +144,7 @@ impl RcloneDecryptor {
 			println!("Debug: Total encrypted data size: {} bytes", remaining_data.len());
 		};
 		// Strategy 1: Try as single block
-		let nonce_obj = sodiumoxide::crypto::secretbox::Nonce::from_slice(&base_nonce).ok_or(DecryptionError::InvalidFormat)?;
-		if let Ok(decrypted_data) = sodiumoxide::crypto::secretbox::open(&remaining_data, &nonce_obj, &secretbox_key) {
+		if let Ok(decrypted_data) = cipher.decrypt((&base_nonce).into(), remaining_data.as_slice()) {
 			if verbose {
 				println!("Debug: Successfully decrypted as single block!");
 				println!("Debug: Decrypted data size: {} bytes", decrypted_data.len());
@@ -188,12 +189,11 @@ impl RcloneDecryptor {
 			}
 
 			let chunk_data = &remaining_data[current_pos..current_pos + chunk_size];
-			let chunk_nonce_obj = sodiumoxide::crypto::secretbox::Nonce::from_slice(&chunk_nonce).ok_or(DecryptionError::InvalidFormat)?;
 			if verbose {
 				println!("Debug: Trying to decrypt chunk at pos {} with size {} bytes (remaining: {})", current_pos, chunk_size, remaining_bytes);
 				println!("Debug: Current nonce: {:?}", &chunk_nonce[..8]); // Show first 8 bytes of nonce
 			};
-			if let Ok(decrypted_chunk) = sodiumoxide::crypto::secretbox::open(chunk_data, &chunk_nonce_obj, &secretbox_key) {
+			if let Ok(decrypted_chunk) = cipher.decrypt((&chunk_nonce).into(), chunk_data) {
 				if verbose {
 					println!("Debug: ✅ Successfully decrypted chunk at pos {} -> {} decrypted bytes", current_pos, decrypted_chunk.len());
 					if current_pos == 0 {
@@ -239,8 +239,7 @@ impl RcloneDecryptor {
 					if verbose {
 						println!("Debug: Trying big-endian increment: {:?}", &test_nonce[..8]);
 					};
-					let test_nonce_obj = sodiumoxide::crypto::secretbox::Nonce::from_slice(&test_nonce).ok_or(DecryptionError::InvalidFormat)?;
-					if let Ok(decrypted_chunk) = sodiumoxide::crypto::secretbox::open(chunk_data, &test_nonce_obj, &secretbox_key) {
+					if let Ok(decrypted_chunk) = cipher.decrypt((&chunk_nonce).into(), chunk_data) {
 						if verbose {
 							println!("Debug: ✅ SUCCESS with big-endian nonce increment!");
 						};
@@ -258,8 +257,7 @@ impl RcloneDecryptor {
 					if verbose {
 						println!("Debug: Trying 64-bit counter increment: {:?}", &test_nonce[..8]);
 					};
-					let test_nonce_obj = sodiumoxide::crypto::secretbox::Nonce::from_slice(&test_nonce).ok_or(DecryptionError::InvalidFormat)?;
-					if let Ok(decrypted_chunk) = sodiumoxide::crypto::secretbox::open(chunk_data, &test_nonce_obj, &secretbox_key) {
+					if let Ok(decrypted_chunk) = cipher.decrypt((&chunk_nonce).into(), chunk_data) {
 						if verbose {
 							println!("Debug: ✅ SUCCESS with 64-bit counter nonce increment!");
 						};

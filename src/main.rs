@@ -25,7 +25,7 @@ fn run() -> DecryptionResult<()> {
 		println!("Input file: {}", input_file);
 		println!("Output file: {}", output_file);
 		println!("Password: (provided)");
-		println!("Salt: {}", &salt);
+		println!("Salt: {}", salt);
 	}
 	let decryptor = RcloneDecryptor::new(password.to_string(), salt.to_string())?;
 	if verbose {
