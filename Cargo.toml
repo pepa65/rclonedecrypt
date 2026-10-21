@@ -1,6 +1,6 @@
 [package]
 name = "rclonedecrypt"
-version = "0.4.7"
+version = "0.4.8"
 edition = "2024"
 rust-version = "1.85.1"
 authors = ["github.com/mcolatosti", "github.com/pepa65"]
