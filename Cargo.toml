@@ -2,7 +2,7 @@
 name = "rclonedecrypt"
 version = "0.4.9"
 edition = "2024"
-rust-version = "1.85.1"
+rust-version = "1.87"
 authors = ["github.com/mcolatosti", "github.com/pepa65"]
 description = "CLI to decrypt rclone-encrypted files"
 repository = "https://github.com/pepa65/rclonedecrypt"
